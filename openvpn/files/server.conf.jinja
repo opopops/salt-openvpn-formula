@@ -4,7 +4,7 @@
 {%- if server.local is defined %}
 local {{ server.local }}
 {%- endif %}
-port {{ server.port }}
+port {{ server.get('port', '1194') }}
 proto {{ server.get('proto', 'tcp-server') }}
 dev {{ server.get('dev', 'tun') }}
 
