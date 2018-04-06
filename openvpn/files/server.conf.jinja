@@ -1,4 +1,5 @@
-{%- from "openvpn/map.jinja" import server with context -%}
+{%- from "openvpn/map.jinja" import openvpn with context -%}
+{%- set server = openvpn.get('server', {}) -%}
 
 {%- if server.local is defined %}
 local {{ server.local }}
