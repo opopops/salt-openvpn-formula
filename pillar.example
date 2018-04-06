@@ -1,0 +1,57 @@
+openvpn:
+  server:
+    port: 3129
+    proto: udp
+    dev: tun
+    network: 10.4.5.0
+    netmak: 255.255.255.0
+
+    ciper: 'AES-256-CBC'
+    
+    clients:
+      - name: client1
+        ip: 10.4.5.10
+
+    ssl:
+      ca:
+      crt:
+      key:
+      ta:
+
+    max_clients: 50
+
+    duplicate_cn: True
+    nobody: True
+
+    comp_lzo: True
+
+    dhcp_options:
+      - name: DNS
+        value: 10.0.0.254
+
+    routes:
+      - network: 10.5.0.0
+        netmask: 255.255.255.0
+      - network: 10.6.0.0
+        netmask: 255.255.255.0
+
+    clients:
+      - name: test1
+        ip: 10.4.5.10
+  
+  client:
+    tunnels:
+      first:
+        dev: tun
+        proto: udp
+        remote: 95.35.56.12
+        port: 1194
+        nobody: True
+
+        ssl:
+          ca:
+          crt:
+          key:
+          ta:
+
+      comp_lzo: True

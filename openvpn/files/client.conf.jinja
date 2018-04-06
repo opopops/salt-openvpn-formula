@@ -1,0 +1,71 @@
+{%- from "openvpn/map.jinja" import client with context -%}
+{%- set tunnel = client.tunnels.get('tunnel_name', {}) -%}
+
+client
+dev {{ tunnel.get('dev', 'tun') }}
+proto {{ tunnel.get('proto', 'tcp-client') }}
+
+remote {{ tunnel.get('remote') }} {{ tunnelt.get('port') }}
+resolv-retry infinite
+nobind
+
+{%- if tunnel.get('nobody', False) %}
+user nobody
+group nobody
+{%- endif %}
+
+persist-key
+persist-tun
+
+tls-client
+ca /etc/openvpn/ssl/{{ tunnel_name }}-ca.crt
+cert /etc/openvpn/ssl/{{ tunnel_name }}.crt
+key /etc/openvpn/ssl/{{ tunnel_name }}.key
+{%- if tunnel.get('remote_cert_eku', False) %}
+remote-cert-eku "{{ tunnel.get('remote_cert_eku') }}"
+{%- endif %}
+remote-cert-tls server
+
+{%- if tunnel.ssl.get('ta', False) %}
+tls-auth /etc/openvpn/ssl/{{ tunnel_name }}-ta.key 1
+{%- endif %}
+
+{%- if tunnel.cipher is defined %}
+cipher {{ tunnel.cipher }}
+{%- endif %}
+
+{%- if tunnel.auth is defined %}
+auth {{ tunnel.auth }}
+{%- endif %}
+
+{%- if tunnel.get('comp_lzo', True) %}
+comp-lzo
+{%- endif %}
+
+{%- if tunnel.get('redirect_gateway', False) %}
+redirect-gateway def1 bypass-dhcp
+{%- endif %}
+
+{%- if tunnel.get('route_nopull', True) %}
+route-nopull
+{%- endif %}
+
+{%- for dhcp_option in tunnel.get('dhcp_options', []) %}
+dhcp-option {{ dhcp_option.name }} {{ dhcp_option.value }}
+{%- endfor %}
+
+{%- for route in tunnel.get('routes', []) %}
+route {{ route.network }} {{ route.netmask }}
+{%- endfor %}
+
+script-security 2
+{%- if grains.get('os_family', 'Unknown') == 'Debian' %}
+up /etc/openvpn/update-resolv-conf               
+down /etc/openvpn/update-resolv-conf
+{%- endif %}
+
+verb {{ tnnel.get('verb', 3) }}
+
+{%- for parameter in tunnel.get('parameters', []) %}
+{{ parameter }}
+{%- endfor %}

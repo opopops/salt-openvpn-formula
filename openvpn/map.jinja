@@ -1,0 +1,39 @@
+# -*- coding: utf-8 -*-
+# vim: ft=jinja
+
+{%- set os         = salt['grains.get']('os') %}
+{%- set osrelease  = salt['grains.get']('osrelease') %}
+{%- set oscodename = salt['grains.get']('oscodename') %}
+
+{## Start with defaults from defaults.yaml ##}
+{% import_yaml 'openvpn/defaults.yaml' as default_settings %}
+
+{##
+Setup variables using grains['os_family'] based logic, only add key:values
+that differ from what is in defaults.yaml
+##}
+{% set os_family_map = salt['grains.filter_by']({
+    'Debian': {
+        'pkgs': ['openvpn'],
+        'service': 'openvpn', 
+        'config_dir': '/etc/openvpn',
+    },
+    'RedHat': {
+        'pkgs': ['openvpn'],
+        'service': 'openvpn', 
+        'config_dir': '/etc/openvpn',
+    },
+}
+, grain="os_family"
+, merge=salt['pillar.get']('openvpn:lookup')) %}
+
+{## Merge the flavor_map to the default settings ##}
+{% do default_settings.openvpn.update(os_family_map) %}
+
+{## Merge in openvpn:lookup pillar ##}
+{% set openvpn = salt['pillar.get'](
+        'openvpn',
+        default=default_settings.openvpn,
+        merge=True
+    )
+%}

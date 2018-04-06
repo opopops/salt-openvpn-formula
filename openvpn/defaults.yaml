@@ -1,0 +1,3 @@
+openvpn:
+  service_running: True
+  service_enabled: True
