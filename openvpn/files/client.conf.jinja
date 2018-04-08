@@ -1,11 +1,11 @@
-{%- from "openvpn/map.jinja" import client with context -%}
-{%- set tunnel = client.tunnels.get('tunnel_name', {}) -%}
+{%- from "openvpn/map.jinja" import openvpn with context -%}
+{%- set tunnel = openvpn.client.tunnels.get(tunnel_name, {}) -%}
 
 client
 dev {{ tunnel.get('dev', 'tun') }}
 proto {{ tunnel.get('proto', 'tcp-client') }}
 
-remote {{ tunnel.get('remote') }} {{ tunnelt.get('port') }}
+remote {{ tunnel.get('remote') }} {{ tunnel.get('port') }}
 resolv-retry infinite
 nobind
 
@@ -64,7 +64,7 @@ up /etc/openvpn/update-resolv-conf
 down /etc/openvpn/update-resolv-conf
 {%- endif %}
 
-verb {{ tnnel.get('verb', 3) }}
+verb {{ tunnel.get('verb', 3) }}
 
 {%- for parameter in tunnel.get('parameters', []) %}
 {{ parameter }}
