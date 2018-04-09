@@ -28,7 +28,7 @@ include:
   {%- if params.ssl.get('cert') %}
 /etc/openvpn/ssl/{{tunnel}}.crt:
   file.managed:
-    - contents_pillar: openvpn:client:tunnels:{{tunnel}}:ssl:crt
+    - contents_pillar: openvpn:client:tunnels:{{tunnel}}:ssl:cert
     - watch_in:
       - service: openvpn_client_{{tunnel}}_service
   {%- endif %}
