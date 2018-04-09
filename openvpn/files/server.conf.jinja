@@ -51,7 +51,7 @@ max-clients {{ server.max_clients }}
 
 {%- if server.get('nobody', False) %}
 user nobody
-group nobody
+group nogroup
 {%- endif %}
 
 persist-key
