@@ -5,16 +5,18 @@
 include:
   - openvpn.install
 
-{%- for tunnel, params in client.get('tunnels', {}) %}
+{%- for tunnel, params in client.get('tunnels', {}).iteritems() %}
 /etc/openvpn/{{tunnel}}.conf:
   file.managed:
   - source: salt://openvpn/files/client.conf.jinja
   - template: jinja
   - mode: 600
+  - defaults:
+      tunnel_name: {{tunnel}}
   - require:
     - pkg: openvpn_packages
   - watch_in:
-    - service: openvpn_client_service
+    - service: openvpn_client_{{tunnel}}_service
 
   {%- if params.ssl.get('key') %}
 /etc/openvpn/ssl/{{tunnel}}.key:
@@ -62,4 +64,4 @@ openvpn_client_{{tunnel}}_service:
     - name: {{ openvpn.service }}
     {%- endif %}
     - enable: {{ openvpn.service_enabled }}
-{%- endfor %]}
+{%- endfor %}
