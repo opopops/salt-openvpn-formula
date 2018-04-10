@@ -83,3 +83,21 @@ openvpn_server_service:
     - name: {{ openvpn.service }}
     {%- endif %}
     - enable: {{ openvpn.service_enabled }}
+
+{%- if openvpn.service_enabled %}
+openvpn_server_service_enable:
+  service.enabled:
+    {%- if grains.get('init', None) == 'systemd' %}
+    - name: {{ openvpn.service }}@server
+    {%- else %}
+    - name: {{ openvpn.service }}
+    {%- endif %}
+{%- else %}
+openvpn_server_service_disable:
+  service.disabled:
+    {%- if grains.get('init', None) == 'systemd' %}
+    - name: {{ openvpn.service }}@server
+    {%- else %}
+    - name: {{ openvpn.service }}
+    {%- endif %}
+{%- endif %}
