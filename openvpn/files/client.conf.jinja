@@ -46,7 +46,7 @@ comp-lzo
 redirect-gateway def1 bypass-dhcp
 {%- endif %}
 
-{%- if tunnel.get('route_nopull', True) %}
+{%- if tunnel.get('route_nopull', False) %}
 route-nopull
 {%- endif %}
 
