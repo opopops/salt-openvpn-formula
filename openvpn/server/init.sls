@@ -82,7 +82,6 @@ openvpn_server_service:
     {%- else %}
     - name: {{ openvpn.service }}
     {%- endif %}
-    - enable: {{ openvpn.service_enabled }}
 
 {%- if openvpn.service_enabled %}
 openvpn_server_service_enable:
