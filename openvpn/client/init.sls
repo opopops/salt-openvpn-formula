@@ -67,18 +67,10 @@ openvpn_client_{{tunnel}}_service:
   {%- if openvpn.service_enabled %}
 openvpn_client_{{tunnel}}_service_enable:
   service.enabled:
-    {%- if grains.get('init', None) == 'systemd' %}
-    - name: {{ openvpn.service }}@{{ tunnel }}
-    {%- else %}
     - name: {{ openvpn.service }}
-    {%- endif %}
   {%- else %}
 openvpn_client_{{tunnel}}_service_disable:
   service.disabled:
-    {%- if grains.get('init', None) == 'systemd' %}
-    - name: {{ openvpn.service }}@{{ tunnel }}
-    {%- else %}
     - name: {{ openvpn.service }}
-    {%- endif %}
   {%- endif %}
 {%- endfor %}
