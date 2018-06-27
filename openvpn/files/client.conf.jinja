@@ -1,13 +1,24 @@
 {%- from "openvpn/map.jinja" import openvpn with context -%}
-{%- set tunnel = openvpn.client.tunnels.get(tunnel_name, {}) -%}
+{%- set tunnel   = openvpn.client.tunnels.get(tunnel_name, {}) -%}
+{%- set hostname = salt['grains.get']('host') %}
+
+# --------------------------------------
+#
+#         (c) KLAXOON 2014-2018
+#
+#     global openvpn client setting
+#
+# --------------------------------------
 
 client
 dev {{ tunnel.get('dev', 'tun') }}
 proto {{ tunnel.get('proto', 'tcp-client') }}
 
 remote {{ tunnel.get('remote') }} {{ tunnel.get('port') }}
-resolv-retry infinite
+resolv-retry {{ tunnel.get('resolv_retry', 'infinite') }} 
+connect-retry {{ tunnel.get('connect_retry', 60) }}
 nobind
+writepid /var/run/openvpn.pid
 
 {%- if tunnel.get('nobody', False) %}
 user nobody
@@ -17,17 +28,17 @@ group nogroup
 persist-key
 persist-tun
 
+{%- if tunnel.get("tls-client", False) %}
 tls-client
-ca /etc/openvpn/ssl/{{ tunnel_name }}-ca.crt
-cert /etc/openvpn/ssl/{{ tunnel_name }}.crt
-key /etc/openvpn/ssl/{{ tunnel_name }}.key
-{%- if tunnel.get('remote_cert_eku', False) %}
-remote-cert-eku "{{ tunnel.get('remote_cert_eku') }}"
 {%- endif %}
+
 remote-cert-tls server
+ca /etc/openvpn/ssl/{{tunnel_name}}-ca.crt
+cert /etc/openvpn/ssl/{{tunnel_name}}.crt
+key /etc/openvpn/ssl/{{tunnel_name}}.key
 
 {%- if tunnel.ssl.get('ta', False) %}
-tls-auth /etc/openvpn/ssl/{{ tunnel_name }}-ta.key 1
+tls-auth /etc/openvpn/ssl/{{tunnel_name}}-ta.key 1
 {%- endif %}
 
 {%- if tunnel.cipher is defined %}
@@ -58,13 +69,15 @@ dhcp-option {{ dhcp_option.name }} {{ dhcp_option.value }}
 route {{ route.network }} {{ route.netmask }}
 {%- endfor %}
 
-script-security 2
+script-security {{ tunnel.get('script_security', 2) }}
 {%- if grains.get('os_family', 'Unknown') == 'Debian' %}
 up /etc/openvpn/update-resolv-conf               
 down /etc/openvpn/update-resolv-conf
 {%- endif %}
 
 verb {{ tunnel.get('verb', 3) }}
+
+mute {{ tunnel.get('mute', 20) }}
 
 {%- for parameter in tunnel.get('parameters', []) %}
 {{ parameter }}

@@ -33,7 +33,16 @@ openvpn_ip_forward:
   {%- if server.ssl.get('key') %}
 /etc/openvpn/ssl/server.key:
   file.managed:
+  {%- if server.ssl.key.source is defined %}
+    - source: {{server.ssl.key.source}}
+    {%- if server.ssl.key.get('source_hash', False) %}
+    - source_hash: {{server.ssl.key.source_hash}}
+    {%- else %}
+    - skip_verify: True
+    {%- endif %}
+  {%- else %}
     - contents_pillar: openvpn:server:ssl:key
+  {%- endif %}
     - mode: 600
     - watch_in:
       - service: openvpn_server_service
@@ -42,7 +51,16 @@ openvpn_ip_forward:
   {%- if server.ssl.get('cert') %}
 /etc/openvpn/ssl/server.crt:
   file.managed:
+  {%- if server.ssl.cert.source is defined %}
+    - source: {{server.ssl.cert.source}}
+    {%- if server.ssl.cert.get('source_hash', False) %}
+    - source_hash: {{server.ssl.cert.source_hash}}
+    {%- else %}
+    - skip_verify: True
+    {%- endif %}
+  {%- else %}
     - contents_pillar: openvpn:server:ssl:cert
+  {%- endif %}
     - watch_in:
       - service: openvpn_server_service
   {%- endif %}
@@ -50,7 +68,16 @@ openvpn_ip_forward:
   {%- if server.ssl.get('ca') %}
 /etc/openvpn/ssl/ca.crt:
   file.managed:
+  {%- if server.ssl.ca.source is defined %}
+    - source: {{server.ssl.ca.source}}
+    {%- if server.ssl.ca.get('source_hash', False) %}
+    - source_hash: {{server.ssl.ca.source_hash}}
+    {%- else %}
+    - skip_verify: True
+    {%- endif %}
+  {%- else %}
     - contents_pillar: openvpn:server:ssl:ca
+  {%- endif %}
     - watch_in:
       - service: openvpn_server_service
   {%- endif %}
@@ -58,7 +85,16 @@ openvpn_ip_forward:
   {%- if server.ssl.get('ta') %}
 /etc/openvpn/ssl/ta.key:
   file.managed:
+  {%- if server.ssl.ta.source is defined %}
+    - source: {{server.ssl.ta.source}}
+    {%- if server.ssl.ta.get('source_hash', False) %}
+    - source_hash: {{server.ssl.ta.source_hash}}
+    {%- else %}
+    - skip_verify: True
+    {%- endif %}
+  {%- else %}
     - contents_pillar: openvpn:server:ssl:ta
+  {%- endif %}
     - mode: 600
     - watch_in:
       - service: openvpn_server_service

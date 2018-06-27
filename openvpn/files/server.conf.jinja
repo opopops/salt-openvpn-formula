@@ -1,24 +1,54 @@
 {%- from "openvpn/map.jinja" import openvpn with context -%}
 {%- set server = openvpn.get('server', {}) -%}
 
+# --------------------------------------
+#
+#         (c) KLAXOON 2014-2018
+#
+#     global openvpn server setting
+#
+# --------------------------------------
+
+mode server
+
 {%- if server.local is defined %}
 local {{ server.local }}
 {%- endif %}
-port {{ server.get('port', '1194') }}
+
+port {{ server.get('port', '1595') }}
 proto {{ server.get('proto', 'tcp-server') }}
 dev {{ server.get('dev', 'tun') }}
 
-ca /etc/openvpn/ssl/ca.crt
-cert /etc/openvpn/ssl/server.crt
-key /etc/openvpn/ssl/server.key
-dh /etc/openvpn/ssl/dh2048.pem
+{%- if server.get("tls-server", False) %}
+tls-server
+{%- endif %}
 
 server {{ server.network }} {{ server.netmask }}
 
+ca   /etc/openvpn/ssl/ca.crt
+cert /etc/openvpn/ssl/server.crt
+key  /etc/openvpn/ssl/server.key
+dh   /etc/openvpn/ssl/dh2048.pem
+
+{%- if server.ssl.get('ta', False) %}
+tls-auth /etc/openvpn/ssl/ta.key 0
+{%- endif %}
+
+{%- if server.get("management", False) %}
+management {{ server.get('management-ip', '127.0.0.1') }} {{ server.get('management-port', '5555') }} # internal management console used for tuning
+{%- endif %}
+
 ifconfig-pool-persist ipp.txt
+
+topology {{ server.get('topology', 'subnet') }}
+
+{%- if server.get("management", False) %}
+client-config-dir /etc/openvpn/ccd
+{%- endif %}
 
 {%- for route in server.get('routes', []) %}
 push "route {{ route.network }} {{ route.netmask }}"
+route {{ route.network }} {{ route.netmask }}
 {%- endfor %}
 
 {%- if server.get('redirect_gateway', False) %}
@@ -38,12 +68,7 @@ push "dhcp-option {{ dhcp_option.name }} {{ dhcp_option.value }}"
 {%- endfor %}
 
 keepalive 10 60
-inactive 600
-
-{%- if server.ssl.get('ta', False) %}
-tls-auth /etc/openvpn/ssl/ta.key 0
-{%- endif %}
-
+inactive {{ server.get('inactive', '600') }}
 
 {%- if server.get('max_clients', False) %}
 max-clients {{ server.max_clients }}
@@ -60,7 +85,10 @@ persist-tun
 status openvpn-status.log
 ;log         openvpn.log
 ;log-append  openvpn.log
+
 verb {{ server.get('verb', 3) }}
+
+mute {{ tunnel.get('mute', 20) }}
 
 {%- if server.get('comp_lzo', True) %}
 comp-lzo
