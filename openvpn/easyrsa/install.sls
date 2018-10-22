@@ -5,4 +5,4 @@ openvpn_easyrsa_archive:
     - name: {{openvpn.config_dir}}/easyrsa
     - source: {{openvpn.easyrsa.base_url}}/v{{openvpn.easyrsa.version}}.tar.gz
     - source_hash: {{openvpn.easyrsa.hash}}
-    - options: easy-rsa-{{openvpn.easyrsa.version}}/easyrsa{{openvpn.easyrsa.version.split('.')[0]}}
+    - options: xvz easy-rsa-{{openvpn.easyrsa.version}}/easyrsa{{openvpn.easyrsa.version.split('.')[0]}}
