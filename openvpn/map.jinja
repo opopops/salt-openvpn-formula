@@ -15,12 +15,12 @@ that differ from what is in defaults.yaml
 {% set os_family_map = salt['grains.filter_by']({
     'Debian': {
         'pkgs': ['openvpn'],
-        'service': 'openvpn', 
+        'service': 'openvpn',
         'config_dir': '/etc/openvpn',
     },
     'RedHat': {
         'pkgs': ['openvpn'],
-        'service': 'openvpn', 
+        'service': 'openvpn',
         'config_dir': '/etc/openvpn',
     },
 }

@@ -8,3 +8,6 @@ include:
   {%- if openvpn.client is defined %}
   - openvpn.client
   {%- endif %}
+  {%- if openvpn.manage_easyrsa %}
+  - openvpn.easyrsa
+  {%- endif %}

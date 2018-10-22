@@ -1,3 +1,10 @@
 openvpn:
   service_running: True
   service_enabled: True
+
+  manage_easyrsa: False
+
+  easyrsa:
+    version: 3.0.5
+    hash: 69dc8efe9c17fe068b42cd4f78c7f2c7
+    base_url: https://github.com/OpenVPN/easy-rsa/archive
