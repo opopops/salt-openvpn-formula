@@ -2,3 +2,4 @@
 
 include:
   - openvpn.easyrsa.install
+  - openvpn.easyrsa.config
