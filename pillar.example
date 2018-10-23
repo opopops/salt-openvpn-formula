@@ -1,4 +1,22 @@
 openvpn:
+  manage_easyrsa: True
+
+  easyrsa:
+    version: 3.0.5
+    vars:
+      EASYRSA_REQ_COUNTRY: FR
+      EASYRSA_REQ_PROVINCE: Britain
+      EASYRSA_REQ_CITY: RENNES
+      EASYRSA_REQ_ORG: World Company
+      EASYRSA_REQ_EMAIL: world.company@co.com
+      EASYRSA_REQ_OU: worl company unit
+      EASYRSA_KEY_SIZE: 4096
+      EASYRSA_ALGO: rsa
+      EASYRSA_CA_EXPIRE: 3650
+      EASYRSA_CERT_EXPIRE: 3650
+      EASYRSA_CRL_DAYS: 180
+      EASYRSA_DIGEST: sha256
+
   server:
     port: 3129
     proto: udp
@@ -7,7 +25,7 @@ openvpn:
     netmak: 255.255.255.0
 
     ciper: 'AES-256-CBC'
-    
+
     clients:
       - name: client1
         ip: 10.4.5.10
@@ -16,7 +34,6 @@ openvpn:
       ca:
       crt:
       key:
-      ta:
 
     max_clients: 50
 
@@ -38,7 +55,7 @@ openvpn:
     clients:
       - name: test1
         ip: 10.4.5.10
-  
+
   client:
     tunnels:
       first:

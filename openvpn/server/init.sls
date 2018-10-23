@@ -82,23 +82,12 @@ openvpn_ip_forward:
       - service: openvpn_server_service
   {%- endif %}
 
-  {%- if server.ssl.get('ta') %}
-/etc/openvpn/ssl/ta.key:
-  file.managed:
-  {%- if server.ssl.ta.source is defined %}
-    - source: {{server.ssl.ta.source}}
-    {%- if server.ssl.ta.get('source_hash', False) %}
-    - source_hash: {{server.ssl.ta.source_hash}}
-    {%- else %}
-    - skip_verify: True
-    {%- endif %}
-  {%- else %}
-    - contents_pillar: openvpn:server:ssl:ta
-  {%- endif %}
-    - mode: 600
+openvpn_generate_ta:
+  cmd.run:
+    - name: openvpn --genkey --secret keys/ta.key
+    - creates: /etc/openvpn/ssl/ta.key
     - watch_in:
       - service: openvpn_server_service
-  {%- endif %}
 
 openvpn_generate_dhparams:
   cmd.run:
