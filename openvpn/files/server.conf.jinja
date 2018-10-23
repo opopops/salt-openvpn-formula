@@ -28,7 +28,7 @@ server {{ server.network }} {{ server.netmask }}
 ca   /etc/openvpn/ssl/ca.crt
 cert /etc/openvpn/ssl/server.crt
 key  /etc/openvpn/ssl/server.key
-dh   /etc/openvpn/ssl/dh2048.pem
+dh   /etc/openvpn/ssl/dh.pem
 
 {%- if server.ssl.get('ta', False) %}
 tls-auth /etc/openvpn/ssl/ta.key 0
