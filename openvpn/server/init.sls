@@ -102,8 +102,8 @@ openvpn_ip_forward:
 
 openvpn_generate_dhparams:
   cmd.run:
-    - name: openssl dhparam -out /etc/openvpn/ssl/dh2048.pem 2048
-    - creates: /etc/openvpn/ssl/dh2048.pem
+    - name: openssl dhparam -out /etc/openvpn/ssl/dh.pem 2048
+    - creates: /etc/openvpn/ssl/dh.pem
     - watch_in:
       - service: openvpn_server_service
 
