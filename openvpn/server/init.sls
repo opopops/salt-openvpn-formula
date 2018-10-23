@@ -84,7 +84,7 @@ openvpn_ip_forward:
 
 openvpn_generate_ta:
   cmd.run:
-    - name: openvpn --genkey --secret keys/ta.key
+    - name: openvpn --genkey --secret /etc/openvpn/ssl/ta.key
     - creates: /etc/openvpn/ssl/ta.key
     - watch_in:
       - service: openvpn_server_service
