@@ -32,7 +32,7 @@ openvpn:
 
     ssl:
       ca:
-      crt:
+      cert:
       key:
 
     max_clients: 50
