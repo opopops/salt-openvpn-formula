@@ -27,11 +27,14 @@ server {{ server.network }} {{ server.netmask }}
 
 cipher {{ server.get('cipher', 'AES-256-CBC') }}
 
+{%- if server.get('comp_lzo', True) %}
+comp-lzo
+{%- endif %}
+
 ca   /etc/openvpn/ssl/ca.crt
 cert /etc/openvpn/ssl/server.crt
 key  /etc/openvpn/ssl/server.key
 dh   /etc/openvpn/ssl/dh.pem
-
 tls-auth /etc/openvpn/ssl/ta.key 0
 
 {%- if server.get("management", False) %}
@@ -85,16 +88,13 @@ persist-key
 persist-tun
 
 status openvpn-status.log
-;log         openvpn.log
-;log-append  openvpn.log
+{%- if server.get('log', False) %}
+log         openvpn.log
+log-append  openvpn.log
+{%- endif %}
 
 verb {{ server.get('verb', 3) }}
-
 mute {{ server.get('mute', 20) }}
-
-{%- if server.get('comp_lzo', True) %}
-comp-lzo
-{%- endif %}
 
 explicit-exit-notify 1
 
