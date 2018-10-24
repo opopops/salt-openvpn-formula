@@ -15,7 +15,7 @@ mode server
 local {{ server.local }}
 {%- endif %}
 
-port {{ server.get('port', '1595') }}
+port {{ server.get('port', '1194') }}
 proto {{ server.get('proto', 'tcp-server') }}
 dev {{ server.get('dev', 'tun') }}
 
@@ -25,20 +25,22 @@ tls-server
 
 server {{ server.network }} {{ server.netmask }}
 
+cipher {{ server.get('cipher', 'AES-256-CBC') }}
+
 ca   /etc/openvpn/ssl/ca.crt
 cert /etc/openvpn/ssl/server.crt
 key  /etc/openvpn/ssl/server.key
 dh   /etc/openvpn/ssl/dh.pem
 
-{%- if server.ssl.get('ta', False) %}
 tls-auth /etc/openvpn/ssl/ta.key 0
-{%- endif %}
 
 {%- if server.get("management", False) %}
 management {{ server.get('management-ip', '127.0.0.1') }} {{ server.get('management-port', '5555') }} # internal management console used for tuning
 {%- endif %}
 
+{%- if server.get("clients", False) %}
 ifconfig-pool-persist ipp.txt
+{%- endif %}
 
 topology {{ server.get('topology', 'subnet') }}
 
