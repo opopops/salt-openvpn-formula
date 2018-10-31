@@ -7,3 +7,13 @@ openvpn_easyrsa_archive:
     - source_hash: {{openvpn.easyrsa.hash}}
     - options: xvz
     - enforce_toplevel: False
+
+openvpn_easyrsa_symlink:
+  file.symlink:
+    - name: /usr/local/bin/easyrsa
+    - target: {{openvpn.config_dir}}/easy-rsa-{{openvpn.easyrsa.version}}/easyrsa{{openvpn.easyrsa.version.split('.')[0]}}/easyrsa
+    - mode: 755
+    - force: True
+    - require:
+      - archive: openvpn_easyrsa_archive
+
