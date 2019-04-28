@@ -3,8 +3,6 @@
 
 # --------------------------------------
 #
-#         (c) KLAXOON 2014-2018
-#
 #     global openvpn server setting
 #
 # --------------------------------------
@@ -16,7 +14,7 @@ local {{ server.local }}
 {%- endif %}
 
 port {{ server.get('port', '1194') }}
-proto {{ server.get('proto', 'tcp-server') }}
+proto {{ server.get('proto', 'tcp-server') }}
 dev {{ server.get('dev', 'tun') }}
 
 {%- if server.get("tls-server", False) %}
@@ -38,7 +36,7 @@ dh   /etc/openvpn/ssl/dh.pem
 tls-auth /etc/openvpn/ssl/ta.key 0
 
 {%- if server.get("management", False) %}
-management {{ server.get('management-ip', '127.0.0.1') }} {{ server.get('management-port', '5555') }} # internal management console used for tuning
+management {{ server.management.get('ip', '127.0.0.1') }} {{ server.management.get('port', '5555') }} # internal management console used for tuning
 {%- endif %}
 
 {%- if server.get("clients", False) %}
@@ -47,13 +45,11 @@ ifconfig-pool-persist ipp.txt
 
 topology {{ server.get('topology', 'subnet') }}
 
-{%- if server.get("management", False) %}
-client-config-dir /etc/openvpn/ccd
-{%- endif %}
+client-config-dir {{ server.get('client_config_dir', '/etc/openvpn/ccd') }}
 
 {%- for route in server.get('routes', []) %}
-push "route {{ route.network }} {{ route.netmask }}"
-route {{ route.network }} {{ route.netmask }}
+push "route {{ route.ip }} {{ route.netmask }}"
+route {{ route.ip }} {{ route.netmask }}
 {%- endfor %}
 
 {%- if server.get('redirect_gateway', False) %}
@@ -72,7 +68,7 @@ duplicate-cn
 push "dhcp-option {{ dhcp_option.name }} {{ dhcp_option.value }}"
 {%- endfor %}
 
-keepalive 10 60
+keepalive {{ server.get('keepalive', '10 60') }}
 inactive {{ server.get('inactive', '600') }}
 
 {%- if server.get('max_clients', False) %}
@@ -87,16 +83,16 @@ group nogroup
 persist-key
 persist-tun
 
-status openvpn-status.log
-{%- if server.get('log', False) %}
-log         openvpn.log
-log-append  openvpn.log
-{%- endif %}
+status {{ server.get('status', 'openvpn-status.log') }}
+log         {{ server.get('log', 'openvpn.log') }}
+log-append  {{ server.get('log_append', 'openvpn.log') }}
 
 verb {{ server.get('verb', 3) }}
 mute {{ server.get('mute', 20) }}
 
-explicit-exit-notify 1
+{%- if server.get('explicit_exit_notify', False) %}
+explicit-exit-notify {{ server.get('explicit_exit_notify') }}
+{%- endif %}
 
 {%- for parameter in server.get('parameters', []) %}
 {{ parameter }}
